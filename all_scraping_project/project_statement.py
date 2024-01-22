@@ -9,20 +9,19 @@ def scrape_lenouvelliste():
         response = requests.get(url)
         response.raise_for_status()
         soup = BeautifulSoup(response.text, 'html.parser')
-        articles = soup.find_all('div', class_='lnv-featured-article')
+        articles1 = soup.find_all('div', class_='lnv-featured-article')
+        articles2 = soup.find_all('div', class_='lnv-featured-article-sm')
 
         data_list = []
 
-        for article in articles:
+        for article in articles1 + articles2:
             title = article.find('h1').text.strip()
-
-            # Use find instead of find_all, and get the first anchor tag
-            link = article.find('a')['href'] if article.find('a') else None
-            
+            link = url + article.find('a')['href'] if article.find('a') else None
             image = article.find('img')['src'] if article.find('img') else None
             description = article.find('p').text
 
             data_list.append([title, link, image, description])
+
 
         save_to_csv(data_list)
         print("Web scraping completed successfully.")
